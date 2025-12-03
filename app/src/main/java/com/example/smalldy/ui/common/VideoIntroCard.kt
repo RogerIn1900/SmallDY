@@ -1,6 +1,7 @@
 package com.example.smalldy.ui.common
 
 import android.R.attr.maxLines
+import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.R
 import androidx.compose.foundation.layout.Column
@@ -19,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -83,11 +85,13 @@ fun VideoIntroCard(
 @Preview
 @Composable
 fun VideoIntroCardPreview() {
+    val context = LocalContext.current
+    val rawImages = listOf("cat2", "cat3", "cat4", "no_stress")
     VideoIntroCard(
         data = VideoIntroData(
-            image = "https://picsum.photos/200/300",
+            image = Uri.parse("android.resource://${context.packageName}/raw/${rawImages[0]}").toString(),
             title = "This is a title",
-            userPic = "https://picsum.photos/200/300",
+            userPic = Uri.parse("android.resource://${context.packageName}/raw/${rawImages[1]}").toString(),
             userName = "UserName",
             isLiked = true,
             likeCount = 1024

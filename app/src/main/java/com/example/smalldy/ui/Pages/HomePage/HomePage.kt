@@ -1,4 +1,4 @@
-package com.example.smalldy.ui.home
+package com.example.smalldy.ui.Pages.HomePage
 
 import android.R
 import androidx.compose.animation.AnimatedContent
@@ -43,6 +43,18 @@ import com.example.smalldy.ui.common.FeedCardData
 import com.example.smalldy.ui.common.NavItem
 import com.example.smalldy.ui.common.TopNav
 
+
+@Composable
+fun Home2() {
+    Box(
+        modifier = Modifier.fillMaxSize() // 或者 fillMaxWidth()/fillMaxHeight()
+    ) {
+        Text(
+            text = "HOME",
+            modifier = Modifier.align(Alignment.Center) // 使 Text 居中
+        )
+    }
+}
 @Composable
 fun Home() {
     // 状态管理
@@ -52,7 +64,7 @@ fun Home() {
     // 缺省数据 - 示例 FeedCard 数据
     val sampleFeedData = listOf(
         FeedCardData(
-            image = "https://picsum.photos/400/533?random=1",
+            image = R.drawable.btn_plus.toString(),
             title = "探索城市美食之旅",
             description = "发现隐藏在城市角落的美味佳肴，每一口都是惊喜",
             author = "美食探索家",
@@ -117,14 +129,14 @@ fun Home() {
                 }
             )
         },
-        bottomBar = {
-            BottomNav(
-                activeTab = activeTab,
-                onTabChange = { tab ->
-                    activeTab = tab
-                }
-            )
-        },
+//        bottomBar = {
+//            BottomNav(
+//                activeTab = activeTab,
+//                onTabChange = { tab ->
+//                    activeTab = tab
+//                }
+//            )
+//        },
         containerColor = Color(0xFFF5F5F5)
     ) { paddingValues ->
         Column(
@@ -161,11 +173,6 @@ fun AppNavGraph(
 //    navController: NavHostController = rememberAnimatedNavController()
 ) {
 
-    // This is the Image that we will add shared element modifier on. It's important to make sure
-// modifiers that are not shared between the two shared elements (such as size modifiers if
-// the size changes) are the parents (i.e. on the left side) of Modifier.sharedElement.
-// Meanwhile, the modifiers that are shared between the shared elements (e.g. Modifier.clip
-// in this case) are on the right side of the Modifier.sharedElement.
     @Composable
     fun Cat(modifier: Modifier = Modifier) {
         Image(
@@ -176,16 +183,9 @@ fun AppNavGraph(
         )
     }
 
-// Shared element key is of type `Any`, which means it can be id, string, etc. The only
-// requirement for the key is that it should be the same for shared elements that you intend
-// to match. Here we use the image resource id as the key.
     val sharedElementKey = R.drawable.arrow_up_float
     var showLargeImage by remember { mutableStateOf(true) }
 
-// First, we need to create a SharedTransitionLayout, this Layout will provide the coordinator
-// space for shared element position animation, as well as an overlay for shared elements to
-// render in. Children content in this Layout will be able to create shared element transition
-// using the receiver scope: SharedTransitionScope
     SharedTransitionLayout(
         Modifier.clickable { showLargeImage = !showLargeImage }.fillMaxSize().padding(10.dp)
     ) {
@@ -276,5 +276,4 @@ fun AppNavGraph(
             }
         }
     }
-
 }

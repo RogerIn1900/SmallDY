@@ -18,6 +18,7 @@ import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -102,16 +103,27 @@ fun MainNavigation(
                 }
             }
         ){paddingValues ->
-            // 使用 NavHost 和 navMap 来处理导航
-            NavHost(
-                navController = navHostController,
-                startDestination = Page.Home.route,
+            HorizontalPager(
+                state = pagerState,
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(paddingValues)
-            ) {
-                // 使用 navMap 函数来定义所有路由
-                navMap(navHostController)
+                    .padding(paddingValues),
+                pageSpacing = 0.dp,
+                contentPadding = PaddingValues(0.dp),
+                verticalAlignment = Alignment.Top,
+                userScrollEnabled = true,
+                reverseLayout = false,
+            ) { page ->
+                // 根据页面索引显示对应的页面内容
+                val currentPage = mainPages[page]
+                when (currentPage) {
+                    Page.Home -> Home()
+                    Page.Friends -> FriendsPage()
+                    Page.Add -> AddPage()
+                    Page.Msg -> MsgPage()
+                    Page.Mine -> MinePage()
+                    else -> Home()
+                }
             }
         }
     }
