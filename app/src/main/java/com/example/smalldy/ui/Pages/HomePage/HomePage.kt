@@ -25,15 +25,19 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import kotlinx.coroutines.launch
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -42,21 +46,92 @@ import com.example.smalldy.ui.common.FeedCard
 import com.example.smalldy.ui.common.FeedCardData
 import com.example.smalldy.ui.common.NavItem
 import com.example.smalldy.ui.common.TopNav
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
+import com.example.smalldy.data.Comment
+import com.example.smalldy.data.toVideo
+import com.example.smalldy.ui.comment.CommentScreen
+import com.example.smalldy.ui.common.VideoList
+import com.example.smalldy.ui.common.generateDefaultVideoCardData
+import com.example.smalldy.ui.navigation.Page
+import com.example.smalldy.SmallDYApplication
+import com.example.smalldy.data.database.VideoRepository
+import com.example.smalldy.data.toVideoCardData
+import com.example.smalldy.ui.video.VideoInteractionViewModel
+import com.example.smalldy.ui.video.VideoOperations
 
 
 @Composable
-fun Home2() {
-    Box(
-        modifier = Modifier.fillMaxSize() // 或者 fillMaxWidth()/fillMaxHeight()
-    ) {
-        Text(
-            text = "HOME",
-            modifier = Modifier.align(Alignment.Center) // 使 Text 居中
-        )
+fun Home(navController: NavController? = null) {
+    val context = LocalContext.current
+    val application = context.applicationContext as SmallDYApplication
+    val repository = application.repository
+    val interactionViewModel: VideoInteractionViewModel = viewModel()
+    val coroutineScope = rememberCoroutineScope()
+
+    // 从数据库获取视频数据
+    val videosWithInteractions by repository.getAllVideosWithInteractions().collectAsState(initial = emptyList())
+    
+    // 转换为 VideoCardData
+    val videoCardData = remember(videosWithInteractions) {
+        videosWithInteractions.map { (video, interaction) ->
+            video.toVideoCardData().copy(
+                isLiked = interaction.isLiked
+            )
+        }
+    }
+    
+    var showCommentScreen by remember { mutableStateOf(false) }
+    var selectedVideo by remember { mutableStateOf<com.example.smalldy.ui.common.VideoCardData?>(null) }
+
+    VideoList(
+        videos = videoCardData,
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color(0xFFF5F5F5)),
+        onVideoClick = { video ->
+            // 导航到视频播放页面
+            navController?.let { nav ->
+                val videoUrl = video.videoUrl ?: video.coverImage // 如果没有视频URL，使用封面图
+                val route = Page.Exoplayer.createRoute(videoUrl, video.title)
+                nav.navigate(route)
+            }
+        },
+        onLikeClick = { videoId, liked ->
+            // 处理点赞 - 使用数据库
+            coroutineScope.launch {
+                repository.updateLikeStatus(videoId, liked)
+            }
+        },
+        onCommentClick = { video ->
+            // 打开评论页面
+            selectedVideo = video
+            showCommentScreen = true
+        },
+        onShareClick = { video ->
+            // 处理转发 - 使用数据库
+            coroutineScope.launch {
+                repository.updateShareStatus(video.id, true)
+            }
+        }
+    )
+    
+    // 评论页面
+    selectedVideo?.let { video ->
+        if (showCommentScreen) {
+            CommentScreen(
+                video = video.toVideo(),
+                interactionViewModel = interactionViewModel,
+                onBack = {
+                    showCommentScreen = false
+                    selectedVideo = null
+                }
+            )
+        }
     }
 }
 @Composable
-fun Home() {
+fun Home2() {
     // 状态管理
     var activeTab by remember { mutableStateOf("home") }
     var activeNavItem by remember { mutableStateOf(2) } // 默认选中"直播"

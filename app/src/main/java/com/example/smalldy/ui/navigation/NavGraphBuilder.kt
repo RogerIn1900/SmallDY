@@ -3,16 +3,31 @@ package com.example.smalldy.ui.navigation
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import com.example.smalldy.ui.Pages.AddPage.AddPage
 import com.example.smalldy.ui.Pages.FriendsPage.FriendsPage
 import com.example.smalldy.ui.Pages.HomePage.Home
 import com.example.smalldy.ui.Pages.MinePage.MinePage
 import com.example.smalldy.ui.Pages.MsgPage.MsgPage
+import com.example.smalldy.ui.Pages.VideoPlayerPage.VideoPlayerPage
 
 fun NavGraphBuilder.navMap(navController: NavController){
-    composable(Page.Home.route) { Home() }
+    composable(Page.Home.route) { 
+        Home(navController = navController)
+    }
     composable(Page.Friends.route) { FriendsPage() }
     composable(Page.Add.route) { AddPage() }
     composable(Page.Msg.route) { MsgPage() }
     composable(Page.Mine.route) { MinePage() }
+    
+    // 视频播放器路由，支持传递视频URL和标题
+    composable(
+        route = Page.Exoplayer.route,
+        arguments = listOf(
+            navArgument("videoUrl") { defaultValue = "" },
+            navArgument("title") { defaultValue = "" }
+        )
+    ) { backStackEntry ->
+        VideoPlayerPage(navBackStackEntry = backStackEntry)
+    }
 }

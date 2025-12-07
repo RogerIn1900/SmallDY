@@ -1,9 +1,7 @@
 package com.example.smalldy.ui.common
 
-import android.R.attr.maxLines
 import android.net.Uri
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.R
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -13,24 +11,21 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
-import com.example.smalldy.data.VideoIntroData
+import com.example.smalldy.data.VideoData
 
 @Composable
 fun VideoIntroCard(
-    data: VideoIntroData,
+    data: VideoData,
     onVideoClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -88,7 +83,7 @@ fun VideoIntroCardPreview() {
     val context = LocalContext.current
     val rawImages = listOf("cat2", "cat3", "cat4", "no_stress")
     VideoIntroCard(
-        data = VideoIntroData(
+        data = VideoData(
             image = Uri.parse("android.resource://${context.packageName}/raw/${rawImages[0]}").toString(),
             title = "This is a title",
             userPic = Uri.parse("android.resource://${context.packageName}/raw/${rawImages[1]}").toString(),

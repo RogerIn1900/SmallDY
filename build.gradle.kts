@@ -3,4 +3,14 @@ plugins {
     alias(libs.plugins.android.application) apply false
     alias(libs.plugins.kotlin.android) apply false
     alias(libs.plugins.kotlin.compose) apply false
+    id("com.google.dagger.hilt.android") version "2.57.1" apply false
+    id("com.google.devtools.ksp") version "2.1.0-1.0.29" apply false
+    id("org.jetbrains.kotlin.plugin.serialization") version "2.1.0" apply false
+}
+
+// 全局排除冲突的依赖
+subprojects {
+    configurations.all {
+        exclude(group = "xpp3", module = "xpp3")
+    }
 }

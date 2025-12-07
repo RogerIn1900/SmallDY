@@ -111,7 +111,7 @@ fun MainNavigation(
                     .padding(paddingValues)
             ) {
                 // 使用 navMap 函数来定义所有路由
-                navMap(navHostController)
+                    navMap(navHostController)
             }
         }
     }
