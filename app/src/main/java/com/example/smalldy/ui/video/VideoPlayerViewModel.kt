@@ -38,7 +38,7 @@ class VideoPlayerViewModel(
 
     private var videoUrl: String? = null
     private var isPlayerPausedForResume = false
-    
+
     init {
         player.prepare()
         player.addListener(object : Player.Listener{
@@ -122,12 +122,12 @@ class VideoPlayerViewModel(
             
             // 直接播放 URL 或 Android resource URI
             // ExoPlayer 支持 android.resource:// 格式的 URI
-            player.apply {
-                setMediaItem(MediaItem.fromUri(videoUrl))
+                player.apply {
+                    setMediaItem(MediaItem.fromUri(videoUrl))
                 prepare()
-                play()
-            }
-            _uiState.update { it.copy(hasVideoLoaded = true) }
+                    play()
+                }
+                _uiState.update { it.copy(hasVideoLoaded = true) }
         }
     }
 
@@ -138,7 +138,7 @@ class VideoPlayerViewModel(
      * @param rawResourceName raw 资源名称（不含扩展名），例如 "video" 对应 "res/raw/video.mp4"
      */
     fun playRawVideo(context: Context, rawResourceName: String) {
-        try {
+            try {
             val resourceUri = getRawResourceUri(context, rawResourceName)
             playVideo(resourceUri.toString())
         } catch (e: IllegalArgumentException) {
@@ -164,10 +164,10 @@ class VideoPlayerViewModel(
             // 提取资源名称并播放 raw 资源
             val resourceName = extractRawResourceName(videoPath)
             playRawVideo(context, resourceName)
-        } else {
+                    } else {
             // 直接播放 URL
             playVideo(videoPath)
-        }
+                }
     }
 
     /**
@@ -175,7 +175,7 @@ class VideoPlayerViewModel(
      */
     fun playVideo(video: com.example.smalldy.data.Video, context: android.content.Context) {
         playVideo(context, video.url)
-    }
+                }
     
     /**
      * 操作：暂停视频
@@ -184,7 +184,7 @@ class VideoPlayerViewModel(
         player.pause()
         _playerState.update { it.copy(isPlaying = false) }
     }
-    
+
     /**
      * 操作：恢复播放
      */

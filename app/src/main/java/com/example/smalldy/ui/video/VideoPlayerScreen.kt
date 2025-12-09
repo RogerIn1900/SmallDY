@@ -113,8 +113,15 @@ fun VideoPlayerScreen(
             factory = { ctx ->
                 PlayerView(ctx).apply {
                     resizeMode = AspectRatioFrameLayout.RESIZE_MODE_FIT
-                    controllerAutoShow = true
+                    // 自动播放下一条时不默认展示控制栏，用户触摸后再显示
+                    controllerAutoShow = false
                     useController = true
+                    // 保持快速隐藏策略，展示后 2 秒自动隐藏
+                    controllerShowTimeoutMs = 2_000
+                    controllerHideOnTouch = true
+                    // 避免切换/prepare 时闪黑屏：保留上一帧，关闭快门背景
+                    setKeepContentOnPlayerReset(true)
+                    setShutterBackgroundColor(android.graphics.Color.TRANSPARENT)
 
                     // 全屏按钮监听
                     setFullscreenButtonClickListener { isFullScreen ->

@@ -9,7 +9,7 @@ import com.example.smalldy.ui.Pages.FriendsPage.FriendsPage
 import com.example.smalldy.ui.Pages.HomePage.Home
 import com.example.smalldy.ui.Pages.MinePage.MinePage
 import com.example.smalldy.ui.Pages.MsgPage.MsgPage
-import com.example.smalldy.ui.Pages.VideoPlayerPage.VideoPlayerPage
+import com.example.smalldy.ui.Pages.VideoPlayerPage.VideoPlayerFeedPage
 
 fun NavGraphBuilder.navMap(navController: NavController){
     composable(Page.Home.route) { 
@@ -20,14 +20,16 @@ fun NavGraphBuilder.navMap(navController: NavController){
     composable(Page.Msg.route) { MsgPage() }
     composable(Page.Mine.route) { MinePage() }
     
-    // 视频播放器路由，支持传递视频URL和标题
+    // 视频播放器路由，支持传递视频索引
     composable(
         route = Page.Exoplayer.route,
         arguments = listOf(
-            navArgument("videoUrl") { defaultValue = "" },
-            navArgument("title") { defaultValue = "" }
+            navArgument("videoIndex") { 
+                type = androidx.navigation.NavType.StringType
+                defaultValue = "0"
+            }
         )
     ) { backStackEntry ->
-        VideoPlayerPage(navBackStackEntry = backStackEntry)
+        VideoPlayerFeedPage(navBackStackEntry = backStackEntry)
     }
 }

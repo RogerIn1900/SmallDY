@@ -25,13 +25,18 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.LaunchedEffect
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import android.util.Log
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.first
+import com.example.smalldy.data.database.DatabaseInitializer
+import kotlinx.coroutines.flow.first
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -70,31 +75,75 @@ fun Home(navController: NavController? = null) {
     val coroutineScope = rememberCoroutineScope()
 
     // 从数据库获取视频数据
-    val videosWithInteractions by repository.getAllVideosWithInteractions().collectAsState(initial = emptyList())
+    val videosWithInteractions by repository.getAllVideosWithInteractions().collectAsStateWithLifecycle(initialValue = emptyList())
     
-    // 转换为 VideoCardData
-    val videoCardData = remember(videosWithInteractions) {
-        videosWithInteractions.map { (video, interaction) ->
+    // 添加日志调试
+    Log.d("HomePage", "Videos count: ${videosWithInteractions.size}")
+    if (videosWithInteractions.isNotEmpty()) {
+        Log.d("HomePage", "First video: ${videosWithInteractions.first().first.title}")
+        Log.d("HomePage", "First video URL: ${videosWithInteractions.first().first.url}")
+    } else {
+        Log.w("HomePage", "No videos found in database!")
+    }
+    
+    // 尝试手动触发数据库初始化（如果数据库为空或视频数量不足）
+    LaunchedEffect(Unit) {
+        if (videosWithInteractions.isEmpty()) {
+            try {
+                val allVideos = repository.getAllVideos().first()
+                Log.d("HomePage", "Direct query: ${allVideos.size} videos")
+                if (allVideos.isEmpty() || allVideos.size < 18) {
+                    Log.w("HomePage", "Database has ${allVideos.size} videos (expected 18), re-initializing...")
+                    DatabaseInitializer.initialize(context, repository, forceRefresh = true)
+                }
+            } catch (e: Exception) {
+                Log.e("HomePage", "Error checking database", e)
+            }
+        }
+    }
+    
+    // 转换为 VideoCardData - 使用稳定的 key 确保列表项不会重新创建
+    val videoCardData = remember(videosWithInteractions.map { it.first.id }) {
+        val cardData = videosWithInteractions.map { (video, interaction) ->
             video.toVideoCardData().copy(
                 isLiked = interaction.isLiked
             )
         }
+        Log.d("HomePage", "VideoCardData count: ${cardData.size}")
+        cardData
     }
+    
+    // 保持列表状态，确保滚动位置和布局稳定
+    val listState = androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState()
     
     var showCommentScreen by remember { mutableStateOf(false) }
     var selectedVideo by remember { mutableStateOf<com.example.smalldy.ui.common.VideoCardData?>(null) }
 
+    // 显示加载状态或视频列表
+    if (videoCardData.isEmpty()) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color(0xFFF5F5F5)),
+            contentAlignment = Alignment.Center
+        ) {
+            androidx.compose.material3.CircularProgressIndicator()
+        }
+    } else {
     VideoList(
-        videos = videoCardData,
+            videos = videoCardData,
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFFF5F5F5)),
+                .background(Color(0xFFF5F5F5)),
+            listState = listState,
         onVideoClick = { video ->
-            // 导航到视频播放页面
+            // 导航到视频播放页面，传递当前视频在列表中的索引
             navController?.let { nav ->
-                val videoUrl = video.videoUrl ?: video.coverImage // 如果没有视频URL，使用封面图
-                val route = Page.Exoplayer.createRoute(videoUrl, video.title)
-                nav.navigate(route)
+                val videoIndex = videoCardData.indexOfFirst { it.id == video.id }
+                if (videoIndex >= 0) {
+                    val route = Page.Exoplayer.createRoute(videoIndex)
+                    nav.navigate(route)
+                }
             }
         },
         onLikeClick = { videoId, liked ->
@@ -114,7 +163,8 @@ fun Home(navController: NavController? = null) {
                 repository.updateShareStatus(video.id, true)
             }
         }
-    )
+        )
+    }
     
     // 评论页面
     selectedVideo?.let { video ->
