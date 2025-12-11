@@ -1,6 +1,9 @@
 package com.example.smalldy
 
 import android.content.pm.PackageManager
+import android.content.Intent
+import android.net.Uri
+import android.provider.Settings
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -27,6 +30,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import com.example.smalldy.ui.navigation.MainNavigation
 import com.example.smalldy.ui.theme.SmallDYTheme
+import com.example.smalldy.ui.ai.AIFloatingService
 
 @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
 class MainActivity : ComponentActivity() {
@@ -42,6 +46,7 @@ class MainActivity : ComponentActivity() {
                 windowSizeClass = calculateWindowSizeClass(this),
                 isInPictureInPictureMode = isPipModeSupported,
             )
+            startAIFloatingServiceIfPermitted()
         }
     }
 
@@ -54,5 +59,26 @@ class MainActivity : ComponentActivity() {
         super.onResume()
 //        isPipModeSupported = packageManager.hasSystemFeature(PackageManager.FEATURE_PICTURE_IN_PICTURE) &&
 //                applicationContext.hasPictureInPicturePermission()
+    }
+
+    private fun startAIFloatingServiceIfPermitted() {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+            if (!Settings.canDrawOverlays(this)) {
+                // 引导用户授权悬浮窗权限
+                val intent = Intent(
+                    Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                    Uri.parse("package:$packageName")
+                )
+                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                startActivity(intent)
+                return
+            }
+        }
+        val serviceIntent = Intent(this, AIFloatingService::class.java)
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            startForegroundService(serviceIntent)
+        } else {
+            startService(serviceIntent)
+        }
     }
 }

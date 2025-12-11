@@ -1,5 +1,7 @@
 package com.example.smalldy.ui.navigation
 
+import androidx.annotation.OptIn
+import androidx.media3.common.util.UnstableApi
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
@@ -11,6 +13,7 @@ import com.example.smalldy.ui.Pages.MinePage.MinePage
 import com.example.smalldy.ui.Pages.MsgPage.MsgPage
 import com.example.smalldy.ui.Pages.VideoPlayerPage.VideoPlayerFeedPage
 
+@OptIn(UnstableApi::class)
 fun NavGraphBuilder.navMap(navController: NavController){
     composable(Page.Home.route) { 
         Home(navController = navController)
@@ -30,6 +33,8 @@ fun NavGraphBuilder.navMap(navController: NavController){
             }
         )
     ) { backStackEntry ->
-        VideoPlayerFeedPage(navBackStackEntry = backStackEntry)
+        VideoPlayerFeedPage(
+            navBackStackEntry = backStackEntry
+        )
     }
 }

@@ -1,3 +1,6 @@
+import org.gradle.kotlin.dsl.implementation
+import org.jetbrains.kotlin.gradle.internal.types.error.ErrorModuleDescriptor.platform
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -82,6 +85,8 @@ dependencies {
     implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.compose.animation)
     implementation(libs.androidx.compose.foundation.layout)
+    // Pull-to-refresh（与 Compose 1.10.x 对齐）
+
     // Material Icons (通过 BOM 管理版本)
     implementation("androidx.compose.material:material-icons-core")
     implementation("androidx.compose.material:material-icons-extended")
@@ -101,6 +106,8 @@ dependencies {
 
     // Hilt - 使用最新版本（与根 build.gradle.kts 中的版本一致）
     implementation("com.google.dagger:hilt-android:2.57.1")
+    implementation(libs.androidx.ui)
+    implementation(libs.androidx.compose.runtime)
     ksp("com.google.dagger:hilt-android-compiler:2.57.1")
 
     // 图片加载 - Coil
