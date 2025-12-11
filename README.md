@@ -7,12 +7,11 @@
   - 全屏播放器（双击点赞、自定义控制层）
   - AI 悬浮球与聊天页面
 
-### 视频播放：
-![Screenshot 1](https://github.com/user-attachments/assets/7e29074a-c10d-4872-a30b-88ee1ae09240){:width="33%"} 
-![Screenshot 2](https://github.com/user-attachments/assets/32b186b8-cfd5-4d30-b7d9-5ba5e7553bf1){:width="33%"}
+### 图片展示：
+| ![Screenshot 1](https://github.com/user-attachments/assets/7e29074a-c10d-4872-a30b-88ee1ae09240) | ![Screenshot 2](https://github.com/user-attachments/assets/32b186b8-cfd5-4d30-b7d9-5ba5e7553bf1) | ![Screenshot 3](https://github.com/user-attachments/assets/7bd8db4c-5c9c-4068-8257-5e5b4b336176) |
+|:--------------------------------------------:|:--------------------------------------------:|:--------------------------------------------:|
+| 视频播放展示1                               | 视频播放展示2                               | AI 聊天展示                                 |
 
-### AI 聊天：
-![Screenshot 3](https://github.com/user-attachments/assets/7bd8db4c-5c9c-4068-8257-5e5b4b336176){:width="33%"}
 
 ## 2. 主要模块
 
