@@ -1,4 +1,4 @@
-# SmallDY 项目说明
+[Screen_recording_20251212_000521.webm](https://github.com/user-attachments/assets/5eef95ee-0a7f-4e07-9021-97a4fb1b41ba)# SmallDY 项目说明
 
 ## 1. 项目概览
 - **技术栈**：Jetpack Compose、Media3 ExoPlayer、Navigation Compose、Room
@@ -11,6 +11,11 @@
 | ![Screenshot 1](https://github.com/user-attachments/assets/7e29074a-c10d-4872-a30b-88ee1ae09240) | ![Screenshot 2](https://github.com/user-attachments/assets/32b186b8-cfd5-4d30-b7d9-5ba5e7553bf1) | ![Screenshot 3](https://github.com/user-attachments/assets/7bd8db4c-5c9c-4068-8257-5e5b4b336176) |
 |:--------------------------------------------:|:--------------------------------------------:|:--------------------------------------------:|
 | 视频播放展示1                               | 视频播放展示2                               | AI 聊天展示                                 |
+
+
+
+
+
 
 
 ## 2. 主要模块
