@@ -24,7 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
-import com.example.smalldy.ui.common.BottomNav
+import com.example.smalldy.ui.components.BottomNav
 
 @Composable
 fun MainNavigation(

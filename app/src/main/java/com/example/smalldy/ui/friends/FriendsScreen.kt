@@ -1,4 +1,4 @@
-package com.example.smalldy.ui.Pages.FriendsPage
+package com.example.smalldy.ui.friends
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -18,9 +18,9 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -28,23 +28,25 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.smalldy.ui.model.FriendRecommendUiModel
 
 @Composable
-fun FriendsPage(
-    modifier: Modifier = Modifier
+fun FriendsScreen(
+    viewModel: FriendsViewModel = hiltViewModel()
 ) {
+    val recommendations by viewModel.recommendations.collectAsStateWithLifecycle()
     val bgColor = Color(0xFF05060A)
 
     Column(
-        modifier = modifier
+        modifier = Modifier
             .fillMaxSize()
             .background(bgColor)
             .padding(horizontal = 16.dp)
     ) {
-        Spacer(Modifier.height(56.dp)) // 顶部占位（可换成真正的TopBar）
+        Spacer(Modifier.height(56.dp))
 
-        // 发现通讯录朋友 卡片
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -54,16 +56,13 @@ fun FriendsPage(
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                // 中间插画占位
                 Box(
                     modifier = Modifier
                         .size(120.dp)
                         .clip(RoundedCornerShape(24.dp))
                         .background(Color(0xFF12D1C2)),
                     contentAlignment = Alignment.Center
-                ) {
-
-                }
+                ) {}
 
                 Spacer(Modifier.height(24.dp))
 
@@ -85,7 +84,7 @@ fun FriendsPage(
                 Spacer(Modifier.height(24.dp))
 
                 Button(
-                    onClick = { /* TODO 通讯录权限 */ },
+                    onClick = {},
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color(0xFFFF2850),
                         contentColor = Color.White
@@ -110,7 +109,6 @@ fun FriendsPage(
 
         Spacer(Modifier.height(16.dp))
 
-        // 为你推荐 标题
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.fillMaxWidth()
@@ -122,7 +120,6 @@ fun FriendsPage(
                 fontWeight = FontWeight.Bold
             )
             Spacer(Modifier.width(4.dp))
-
             Spacer(Modifier.weight(1f))
             Text(
                 text = "关闭",
@@ -133,20 +130,14 @@ fun FriendsPage(
 
         Spacer(Modifier.height(8.dp))
 
-        val mockFriends = listOf(
-            Triple("火种Lewis", "可能认识的人", "关注"),
-            Triple("飞蟹蚊子", "可能认识的人", "关注"),
-            Triple("北极圈剩饭", "可能认识的人", "关注")
-        )
-
         LazyColumn(
             modifier = Modifier.fillMaxSize()
         ) {
-            items(mockFriends) { (name, desc, btnLabel) ->
+            items(recommendations) { friend ->
                 FriendRecommendItem(
-                    name = name,
-                    desc = desc,
-                    buttonText = btnLabel
+                    name = friend.name,
+                    desc = friend.description,
+                    buttonText = friend.buttonText
                 )
             }
         }
@@ -166,7 +157,6 @@ private fun FriendRecommendItem(
             .padding(vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        // 头像占位
         Box(
             modifier = Modifier
                 .size(48.dp)
@@ -201,7 +191,7 @@ private fun FriendRecommendItem(
         }
 
         Button(
-            onClick = { /* TODO 关注 */ },
+            onClick = {},
             colors = ButtonDefaults.buttonColors(
                 containerColor = Color(0xFFFF2850),
                 contentColor = Color.White

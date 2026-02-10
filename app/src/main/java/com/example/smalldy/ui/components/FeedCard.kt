@@ -1,6 +1,5 @@
-package com.example.smalldy.ui.common
+package com.example.smalldy.ui.components
 
-import android.R
 import android.content.Context
 import android.net.Uri
 import androidx.compose.foundation.background
@@ -8,14 +7,11 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -24,7 +20,6 @@ import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -36,87 +31,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
-import com.example.smalldy.R as AppR
-
-data class FeedCardData(
-    val image: String,
-    val title: String,
-    val description: String? = null,
-    val author: String,
-    val avatar: String,
-    val likes: Int
-)
-
-/**
- * 生成缺省的 FeedCardData，使用 raw 文件夹中的图片
- */
-fun generateDefaultFeedCardData(context: Context): FeedCardData {
-    val rawImages = listOf("cat2", "cat3", "cat4", "no_stress")
-    val randomImage = rawImages.random()
-    val imageUri = Uri.parse("android.resource://${context.packageName}/raw/$randomImage")
-    
-    val titles = listOf(
-        "探索城市美食之旅",
-        "周末户外运动指南",
-        "摄影技巧分享",
-        "旅行日记：云南之行",
-        "科技产品评测",
-        "生活小妙招",
-        "音乐分享时刻",
-        "读书心得分享",
-        "健身打卡日记",
-        "美食制作教程"
-    )
-    
-    val descriptions = listOf(
-        "发现隐藏在城市角落的美味佳肴，每一口都是惊喜",
-        "享受阳光，拥抱自然，让身体和心灵都得到放松",
-        "用镜头记录生活中的美好瞬间，捕捉每一个精彩时刻",
-        "彩云之南，风景如画，感受不一样的民族风情",
-        "最新科技产品深度体验，为你提供最真实的购买建议",
-        "简单实用的生活技巧，让每一天都更美好",
-        "分享好听的音乐，让心情随着旋律飞扬",
-        "好书推荐，一起在文字中寻找智慧与温暖",
-        "坚持运动，遇见更好的自己",
-        "手把手教你制作美味佳肴，享受烹饪的乐趣"
-    )
-    
-    val authors = listOf(
-        "美食探索家",
-        "运动达人",
-        "摄影师小王",
-        "旅行者",
-        "科技评测",
-        "生活小助手",
-        "音乐爱好者",
-        "书虫",
-        "健身教练",
-        "美食博主"
-    )
-    
-    // 头像也使用 raw 文件夹中的图片
-    val randomAvatar = rawImages.random()
-    val avatarUri = Uri.parse("android.resource://${context.packageName}/raw/$randomAvatar")
-    
-    return FeedCardData(
-        image = imageUri.toString(),
-        title = titles.random(),
-        description = descriptions.random(),
-        author = authors.random(),
-        avatar = avatarUri.toString(),
-        likes = (100..50000).random()
-    )
-}
+import com.example.smalldy.ui.model.FeedCardUiModel
 
 @Composable
 fun FeedCard(
-    data: FeedCardData? = null,
+    data: FeedCardUiModel,
     modifier: Modifier = Modifier,
     onClick: () -> Unit = {}
 ) {
-    val context = LocalContext.current
-    val defaultData = remember(context) { generateDefaultFeedCardData(context) }
-    val cardData = data ?: defaultData
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -131,8 +53,8 @@ fun FeedCard(
                 .clip(RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp))
         ) {
             AsyncImage(
-                model = cardData.image,
-                contentDescription = cardData.title,
+                model = data.image,
+                contentDescription = data.title,
                 modifier = Modifier.fillMaxWidth(),
                 contentScale = ContentScale.Crop
             )
@@ -150,15 +72,15 @@ fun FeedCard(
                     .padding(bottom = 12.dp)
             ) {
                 Text(
-                    text = cardData.title,
+                    text = data.title,
                     fontSize = 14.sp,
                     color = Color(0xFF1A1A1A),
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
-                if (!cardData.description.isNullOrEmpty()) {
+                if (!data.description.isNullOrEmpty()) {
                     Text(
-                        text = cardData.description,
+                        text = data.description,
                         fontSize = 14.sp,
                         color = Color(0xFF666666),
                         maxLines = 1,
@@ -180,15 +102,15 @@ fun FeedCard(
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     AsyncImage(
-                        model = cardData.avatar,
-                        contentDescription = cardData.author,
+                        model = data.avatar,
+                        contentDescription = data.author,
                         modifier = Modifier
                             .size(20.dp)
                             .clip(CircleShape),
                         contentScale = ContentScale.Crop
                     )
                     Text(
-                        text = cardData.author,
+                        text = data.author,
                         fontSize = 12.sp,
                         color = Color(0xFF666666)
                     )
@@ -206,7 +128,7 @@ fun FeedCard(
                         tint = Color(0xFF9CA3AF)
                     )
                     Text(
-                        text = formatLikes(cardData.likes),
+                        text = data.formattedLikes,
                         fontSize = 12.sp,
                         color = Color(0xFF666666)
                     )
@@ -216,27 +138,27 @@ fun FeedCard(
     }
 }
 
-private fun formatLikes(num: Int): String {
-    return if (num >= 10000) {
-        "${(num / 10000.0).let { String.format("%.1f", it) }}万"
-    } else {
-        num.toString()
-    }
-}
-
 @Preview(showBackground = true)
 @Composable
 fun FeedCardPreview() {
+    val context = LocalContext.current
+    val pkg = context.packageName
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(Color(0xFFF5F5F5))
             .padding(16.dp)
     ) {
-        // 使用缺省数据预览
         FeedCard(
+            data = FeedCardUiModel(
+                image = Uri.parse("android.resource://$pkg/raw/cat2").toString(),
+                title = "探索城市美食之旅",
+                description = "发现隐藏在城市角落的美味佳肴",
+                author = "美食探索家",
+                avatar = Uri.parse("android.resource://$pkg/raw/cat3").toString(),
+                formattedLikes = "1.2万"
+            ),
             onClick = {}
         )
     }
 }
-

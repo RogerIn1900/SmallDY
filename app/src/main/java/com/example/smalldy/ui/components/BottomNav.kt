@@ -1,4 +1,4 @@
-package com.example.smalldy.ui.common
+package com.example.smalldy.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -125,5 +125,3 @@ fun BottomNav(
         }
     }
 }
-
-
