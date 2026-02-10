@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(.gradlew.bat assembleDebug:*)",
+      "Bash(cmd //c \"gradlew.bat assembleDebug\")",
+      "Bash(D:/JustDoIt/AndroidStudio2/project/DY/SmallDY/gradlew.bat:*)",
+      "Bash(find:*)"
+    ]
+  }
+}

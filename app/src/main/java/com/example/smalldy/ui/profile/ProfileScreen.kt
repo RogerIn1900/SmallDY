@@ -1,5 +1,4 @@
-package com.example.smalldy.ui.Pages.MinePage
-
+package com.example.smalldy.ui.profile
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -14,16 +13,12 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountBox
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -31,6 +26,7 @@ import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -40,18 +36,30 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.smalldy.ui.model.ProfileUiModel
 
 @Composable
-fun MinePage(
-    modifier: Modifier = Modifier
+fun ProfileScreen(
+    viewModel: ProfileViewModel = hiltViewModel()
+) {
+    val profile by viewModel.profile.collectAsStateWithLifecycle()
+
+    profile?.let { data ->
+        ProfileContent(data)
+    }
+}
+
+@Composable
+private fun ProfileContent(
+    profile: ProfileUiModel
 ) {
     Column(
-        modifier = modifier
+        modifier = Modifier
             .fillMaxSize()
             .background(Color(0xFFF6F7FB))
     ) {
-        // 顶部背景 + 头像区域
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -67,7 +75,6 @@ fun MinePage(
                     .fillMaxSize()
                     .padding(horizontal = 16.dp, vertical = 12.dp)
             ) {
-                // 顶部操作行：添加好友、新访客等，这里简单化
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
@@ -90,7 +97,6 @@ fun MinePage(
                 Row(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    // 头像 + 添加按钮
                     Box(
                         modifier = Modifier
                             .size(76.dp)
@@ -125,14 +131,14 @@ fun MinePage(
 
                     Column {
                         Text(
-                            text = "点击填写名字",
+                            text = profile.displayName,
                             color = Color.White,
                             fontSize = 20.sp,
                             fontWeight = FontWeight.Bold
                         )
                         Spacer(Modifier.height(4.dp))
                         Text(
-                            text = "抖音号：25954785652",
+                            text = "抖音号：${profile.douyinId}",
                             color = Color(0xFFE4ECFF),
                             fontSize = 13.sp
                         )
@@ -141,20 +147,18 @@ fun MinePage(
 
                 Spacer(Modifier.height(12.dp))
 
-                // 统计信息：获赞 / 互关 / 关注 / 粉丝
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    ProfileStat("0", "获赞")
-                    ProfileStat("1", "互关")
-                    ProfileStat("22", "关注")
-                    ProfileStat("1", "粉丝")
+                    ProfileStat(profile.likesCount, "获赞")
+                    ProfileStat(profile.mutualFollowCount, "互关")
+                    ProfileStat(profile.followingCount, "关注")
+                    ProfileStat(profile.followersCount, "粉丝")
                 }
             }
         }
 
-        // 中间功能区：商城 / 钱包 / 全部功能
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -167,7 +171,6 @@ fun MinePage(
             MineFeatureItem("全部功能", Icons.Default.Close)
         }
 
-        // Tab 行
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -186,7 +189,6 @@ fun MinePage(
 
         Spacer(Modifier.height(8.dp))
 
-        // 下方操作卡片列表
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -271,7 +273,7 @@ private fun MineActionRow(
         }
 
         Button(
-            onClick = { /* TODO */ },
+            onClick = {},
             colors = ButtonDefaults.buttonColors(
                 containerColor = Color(0xFFFF4180),
                 contentColor = Color.White

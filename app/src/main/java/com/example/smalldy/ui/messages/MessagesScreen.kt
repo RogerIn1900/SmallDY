@@ -1,11 +1,9 @@
-package com.example.smalldy.ui.Pages.MsgPage
-
+package com.example.smalldy.ui.messages
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -14,19 +12,12 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -34,6 +25,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -41,19 +33,24 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.smalldy.ui.model.ChatMessageUiModel
+import com.example.smalldy.ui.model.SystemMessageUiModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MsgPage(
-    modifier: Modifier = Modifier
+fun MessagesScreen(
+    viewModel: MessagesViewModel = hiltViewModel()
 ) {
+    val systemMessages by viewModel.systemMessages.collectAsStateWithLifecycle()
+    val chatMessages by viewModel.chatMessages.collectAsStateWithLifecycle()
+
     Column(
-        modifier = modifier
+        modifier = Modifier
             .fillMaxSize()
             .background(Color.White)
     ) {
-        // 顶部 AppBar
         TopAppBar(
             title = { Text("消息") },
             navigationIcon = {
@@ -64,16 +61,15 @@ fun MsgPage(
                 )
             },
             actions = {
-                IconButton(onClick = { /* 搜索 */ }) {
+                IconButton(onClick = {}) {
                     Icon(Icons.Default.Search, contentDescription = null)
                 }
-                IconButton(onClick = { /* 新建 */ }) {
+                IconButton(onClick = {}) {
                     Icon(Icons.Default.Add, contentDescription = null)
                 }
             }
         )
 
-        // 顶部提示条
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -101,7 +97,6 @@ fun MsgPage(
             )
         }
 
-        // 顶部三个入口：发日常 / 某联系人 / 状态设置
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -115,33 +110,32 @@ fun MsgPage(
 
         Divider()
 
-        // 系统消息分组
         Column(
             modifier = Modifier.fillMaxWidth()
         ) {
-            MsgSystemItem(title = "新关注我的", subtitle = "没有新通知")
-            MsgSystemItem(title = "互动消息", subtitle = "没有新通知")
+            systemMessages.forEach { msg ->
+                MsgSystemItem(title = msg.title, subtitle = msg.subtitle)
+            }
         }
 
         Divider(thickness = 8.dp, color = Color(0xFFF5F5F7))
 
-        // 最近聊天
         Column(
-            modifier = Modifier
-                .fillMaxSize()
+            modifier = Modifier.fillMaxSize()
         ) {
-            MsgChatItem(
-                name = "（彭绮雯） conflict 🐬🐬🐬",
-                subtitle = "昨天在线",
-                isOnline = false
-            )
+            chatMessages.forEach { chat ->
+                MsgChatItem(
+                    name = chat.name,
+                    subtitle = chat.subtitle,
+                    isOnline = chat.isOnline
+                )
+            }
 
             Spacer(Modifier.height(16.dp))
 
             Text(
                 text = "暂时没有更多了",
-                modifier = Modifier
-                    .align(Alignment.CenterHorizontally),
+                modifier = Modifier.align(Alignment.CenterHorizontally),
                 color = Color.Gray,
                 fontSize = 13.sp
             )
